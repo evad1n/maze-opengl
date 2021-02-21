@@ -1,27 +1,25 @@
-// OpenGL/GLUT starter kit for Windows 7 and Visual Studio 2010
-// Created spring, 2011
-//
-// This is a starting point for OpenGl applications.
-// Add code to the "display" function below, or otherwise
-// modify this file to get your desired results.
-//
-// For the first assignment, add this file to an empty Windows Console project
-//		and then compile and run it as is.
-// NOTE: You should also have glut.h,
-// glut32.dll, and glut32.lib in the directory of your project.
-// OR, see GlutDirectories.txt for a better place to put them.
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include <GL/freeglut.h>
-#include <cmath>
-#include <cstring>
 #include <iostream>
+#include <map>
 #include "graphics.h"
 #include "maze.h"
 #include "rat.h"
 
-// Global Variables (Only what you need!)
+// Global Variables
 double screen_x = 700;
 double screen_y = 500;
+
+double deltaTime = 0;
+
+// Textures
+const int num_textures = 3;
+// Textures folder will be prefixed later
+std::string imageFiles[num_textures] = { "container.jpg", "sand.jpg", "steel.jpg" };
+std::map<std::string, unsigned int> texMap;
+unsigned int texName[num_textures];
 
 bool keystates[256];
 
@@ -32,61 +30,6 @@ Point2 look;
 Maze maze;
 Rat rat;
 ViewType currentView = TOP;
-
-//
-// Functions that draw basic primitives
-//
-void DrawCircle(double x1, double y1, double radius) {
-	glBegin(GL_POLYGON);
-	for (int i = 0; i < 32; i++) {
-		double theta = (double)i / 32.0 * 2.0 * 3.1415926;
-		double x = x1 + radius * cos(theta);
-		double y = y1 + radius * sin(theta);
-		glVertex2d(x, y);
-	}
-	glEnd();
-}
-
-void DrawRectangle(double x, double y, double width, double height) {
-	glBegin(GL_QUADS);
-	glVertex2d(x, y);
-	glVertex2d(x + width, y);
-	glVertex2d(x + width, y + height);
-	glVertex2d(x, y + height);
-	glEnd();
-}
-
-void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3) {
-	glBegin(GL_TRIANGLES);
-	glVertex2d(x1, y1);
-	glVertex2d(x2, y2);
-	glVertex2d(x3, y3);
-	glEnd();
-}
-
-void DrawLine(double x1, double y1, double x2, double y2) {
-	glBegin(GL_LINES);
-	glVertex2d(x1, y1);
-	glVertex2d(x2, y2);
-	glEnd();
-}
-
-// Outputs a string of text at the specified location.
-void DrawText(double x, double y, const char* string) {
-	void* font = GLUT_BITMAP_9_BY_15;
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-
-	int len, i;
-	glRasterPos2d(x, y);
-	len = (int)strlen(string);
-	for (i = 0; i < len; i++) {
-		glutBitmapCharacter(font, string[i]);
-	}
-
-	glDisable(GL_BLEND);
-}
 
 void SetTopView(int w, int h) {
 	// go into 2D mode
@@ -117,6 +60,12 @@ void SetPerspectiveView(int w, int h) {
 // This callback function gets called by the Glut
 // system whenever it decides things need to be redrawn.
 void display(void) {
+	static double prevTime = 0;
+	double curr = glutGet(GLUT_ELAPSED_TIME);
+	deltaTime = curr - prevTime;
+	prevTime = curr;
+
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	switch (currentView) {
@@ -160,8 +109,7 @@ void keyDown(unsigned char c, int x, int y) {
 	case 27: // escape character means to quit the program
 		exit(0);
 		break;
-		// Camera cycle
-	case 'c':
+	case 'c': // Camera cycle
 	{
 		int next = currentView + 1;
 		next %= VIEW_COUNT;
@@ -275,6 +223,34 @@ void mouse(int mouse_button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+void loadTextures() {
+	glGenTextures(num_textures, texName);
+
+	for (int i = 0; i < num_textures; i++) {
+		texMap[imageFiles[i]] = i;
+		glBindTexture(GL_TEXTURE_2D, texName[i]);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(("textures/" + imageFiles[i]).c_str(), &width, &height, &nrChannels, 0);
+		if (data) {
+			gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+			// NOTE: If the above command doesn't work, try it this way:
+				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+				//glGenerateMipmap(GL_TEXTURE_2D);
+		} else {
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(data);
+	}
+}
+
 // Your initialization code goes here.
 void InitializeMyStuff() {
 	srand(time(NULL));
@@ -322,8 +298,10 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(reshape);
 	glutMouseFunc(mouse);
 
+	// Enable transparency from alpha
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+
 	glColor3d(1, 0, 0);			  // foreground color
 	glClearColor(1, 1, 1, 0); // background color
 	InitializeMyStuff();

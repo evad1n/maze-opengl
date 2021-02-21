@@ -1,9 +1,11 @@
 #include <GL/freeglut.h>
 #include <cmath>
-#include "rat.h"
 #include "graphics.h"
+#include "drawing.h"
+#include "rat.h"
 
 extern ViewType currentView;
+extern double deltaTime;
 
 Rat::Rat() {}
 
@@ -67,8 +69,8 @@ void Rat::MoveForward() {
     double dy = sin(radians);
     double speed = this->speed * (this->maze->GetCellSize() / 20);
     // Future pos
-    double fX = this->x + (speed * dx);
-    double fY = this->y + (speed * dy);
+    double fX = this->x + (speed * dx * (deltaTime / 2));
+    double fY = this->y + (speed * dy * (deltaTime / 2));
 
     if (!this->maze->OnWall(fX, fY, this->radius)) {
         this->x = fX;
@@ -86,8 +88,8 @@ void Rat::MoveBackward() {
     double dy = sin(radians);
     double speed = this->speed * (this->maze->GetCellSize() / 20);
     // Future pos
-    double fX = this->x - (speed * dx);
-    double fY = this->y - (speed * dy);
+    double fX = this->x - (speed * dx * (deltaTime / 2));
+    double fY = this->y - (speed * dy * (deltaTime / 2));
 
     if (!this->maze->OnWall(fX, fY, this->radius)) {
         this->x = fX;
@@ -100,11 +102,11 @@ void Rat::MoveBackward() {
 }
 
 void Rat::SpinLeft() {
-    this->rot += this->rotSpeed;
+    this->rot += this->rotSpeed * (deltaTime / 2);
 }
 
 void Rat::SprinRight() {
-    this->rot -= this->rotSpeed;
+    this->rot -= this->rotSpeed * (deltaTime / 2);
 }
 
 void Rat::SetPosition(double x, double y) {

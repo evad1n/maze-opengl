@@ -1,7 +1,8 @@
 #include <GL/freeglut.h>
 #include <iostream>
-#include "maze.h"
 #include "graphics.h"
+#include "drawing.h"
+#include "maze.h"
 
 extern ViewType currentView;
 const int mazeOffset = 20;
@@ -24,15 +25,17 @@ Cell::~Cell() {
 }
 
 void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char walls) {
+    // Draw floors
+    if (this->visited) {
+        if (this->recursing)
+            glColor3d(1, .4, .4);
+        else
+            glColor3d(.9, .9, .9);
+    } else
+        glColor3d(.7, .7, .7);
+    DrawRectangle(x, y, size, size);
+
     if (currentView == TOP) {
-        if (this->visited) {
-            if (this->recursing)
-                glColor3d(1, .4, .4);
-            else
-                glColor3d(.9, .9, .9);
-        } else
-            glColor3d(.7, .7, .7);
-        DrawRectangle(x, y, size, size);
 
         glColor3d(0, 0, 0);
         if (this->top)
@@ -45,6 +48,7 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
             DrawLine(x, y, x + size, y);
     } else {
         this->DrawCorner(x, y, thick, height);
+        // DrawWall(x, y, 0, thick, thick, height);
 
         if (walls & Walls::Top) {
             this->DrawCorner(x, y + size, thick, height);
@@ -167,42 +171,45 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
     }
 }
 
-void Cell::DrawCorner(int x, int y, int thick, int height) {
+void Cell::DrawCorner(int centerX, int centerY, int thick, int height) {
     glColor3ub(0, 0, 0);
+
+    // Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height);
+
     // Bot
     glBegin(GL_QUADS);
-    glVertex3d(x - thick / 2, y - thick / 2, 0);
-    glVertex3d(x - thick / 2, y - thick / 2, height);
-    glVertex3d(x + thick / 2, y - thick / 2, height);
-    glVertex3d(x + thick / 2, y - thick / 2, 0);
+    glVertex3d(centerX - thick / 2, centerY - thick / 2, 0);
+    glVertex3d(centerX - thick / 2, centerY - thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY - thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY - thick / 2, 0);
     glEnd();
     // Left
     glBegin(GL_QUADS);
-    glVertex3d(x - thick / 2, y - thick / 2, 0);
-    glVertex3d(x - thick / 2, y - thick / 2, height);
-    glVertex3d(x - thick / 2, y + thick / 2, height);
-    glVertex3d(x - thick / 2, y + thick / 2, 0);
+    glVertex3d(centerX - thick / 2, centerY - thick / 2, 0);
+    glVertex3d(centerX - thick / 2, centerY - thick / 2, height);
+    glVertex3d(centerX - thick / 2, centerY + thick / 2, height);
+    glVertex3d(centerX - thick / 2, centerY + thick / 2, 0);
     glEnd();
     // Right
     glBegin(GL_QUADS);
-    glVertex3d(x + thick / 2, y - thick / 2, 0);
-    glVertex3d(x + thick / 2, y - thick / 2, height);
-    glVertex3d(x + thick / 2, y + thick / 2, height);
-    glVertex3d(x + thick / 2, y + thick / 2, 0);
+    glVertex3d(centerX + thick / 2, centerY - thick / 2, 0);
+    glVertex3d(centerX + thick / 2, centerY - thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY + thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY + thick / 2, 0);
     glEnd();
     // Top
     glBegin(GL_QUADS);
-    glVertex3d(x - thick / 2, y + thick / 2, 0);
-    glVertex3d(x - thick / 2, y + thick / 2, height);
-    glVertex3d(x + thick / 2, y + thick / 2, height);
-    glVertex3d(x + thick / 2, y + thick / 2, 0);
+    glVertex3d(centerX - thick / 2, centerY + thick / 2, 0);
+    glVertex3d(centerX - thick / 2, centerY + thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY + thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY + thick / 2, 0);
     glEnd();
     // Up
     glBegin(GL_QUADS);
-    glVertex3d(x - thick / 2, y - thick / 2, height);
-    glVertex3d(x + thick / 2, y - thick / 2, height);
-    glVertex3d(x + thick / 2, y + thick / 2, height);
-    glVertex3d(x - thick / 2, y + thick / 2, height);
+    glVertex3d(centerX - thick / 2, centerY - thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY - thick / 2, height);
+    glVertex3d(centerX + thick / 2, centerY + thick / 2, height);
+    glVertex3d(centerX - thick / 2, centerY + thick / 2, height);
     glEnd();
 }
 
