@@ -137,7 +137,8 @@ void keyDown(unsigned char c, int x, int y) {
 		// Space
 		maze.Reset();
 		maze.RemoveWalls(true);
-		rat.SetRandomPosition();
+		if (!maze.creating)
+			rat.SetRandomPosition();
 		break;
 	default:
 		return; // if we don't care, return without glutPostRedisplay()

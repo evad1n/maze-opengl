@@ -36,7 +36,6 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
     DrawRectangle(x, y, size, size);
 
     if (currentView == TOP) {
-
         glColor3d(0, 0, 0);
         if (this->top)
             DrawLine(x, y + size, x + size, y + size);
@@ -65,152 +64,35 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
             int g = (x * 15364 + y * 21316) % 256;
             int b = (x * 12782 + y * 213123) % 256;
             glColor3ub(r, g, b);
-            // Top
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y + size + thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + size + thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + size + thick / 2, height);
-            glVertex3d(x + thick / 2, y + size + thick / 2, height);
-            glEnd();
-            // Bot
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y + size - thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + size - thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + thick / 2, y + size - thick / 2, height);
-            glEnd();
-            // Up
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y + size + thick / 2, height);
-            glVertex3d(x + size - thick / 2, y + size + thick / 2, height);
-            glVertex3d(x + size - thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + thick / 2, y + size - thick / 2, height);
-            glEnd();
+            Draw3DQuad(x + thick / 2, y + size - thick / 2, 0, size - thick, thick, height);
         }
         if (this->left) {
             int r = (x * 17495 + y * 7867) % 256;
             int g = (x * 19626 + y * 212316) % 256;
             int b = (x * 21757 + y * 21316) % 256;
             glColor3ub(r, g, b);
-            // Left
-            glBegin(GL_QUADS);
-            glVertex3d(x - thick / 2, y + thick / 2, 0);
-            glVertex3d(x - thick / 2, y + size - thick / 2, 0);
-            glVertex3d(x - thick / 2, y + size - thick / 2, height);
-            glVertex3d(x - thick / 2, y + thick / 2, height);
-            glEnd();
-            // Right
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y + thick / 2, 0);
-            glVertex3d(x + thick / 2, y + size - thick / 2, 0);
-            glVertex3d(x + thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + thick / 2, y + thick / 2, height);
-            glEnd();
-            // Up
-            glBegin(GL_QUADS);
-            glVertex3d(x - thick / 2, y + thick / 2, height);
-            glVertex3d(x - thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + thick / 2, y + thick / 2, height);
-            glEnd();
+            Draw3DQuad(x - thick / 2, y + thick / 2, 0, thick, size - thick, height);
         }
         if (this->right && (walls & Walls::Right)) {
             int r = (x * 23888 + y * 21316) % 256;
             int g = (x * 26019 + y * 29876) % 256;
             int b = (x * 28150 + y * 21316) % 256;
             glColor3ub(r, g, b);
-            // Left
-            glBegin(GL_QUADS);
-            glVertex3d(x + size - thick / 2, y + thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + size - thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + size - thick / 2, y + thick / 2, height);
-            glEnd();
-            // Right
-            glBegin(GL_QUADS);
-            glVertex3d(x + size + thick / 2, y + thick / 2, 0);
-            glVertex3d(x + size + thick / 2, y + size - thick / 2, 0);
-            glVertex3d(x + size + thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + size + thick / 2, y + thick / 2, height);
-            glEnd();
-            // Up
-            glBegin(GL_QUADS);
-            glVertex3d(x + size - thick / 2, y + thick / 2, height);
-            glVertex3d(x + size - thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + size + thick / 2, y + size - thick / 2, height);
-            glVertex3d(x + size + thick / 2, y + thick / 2, height);
-            glEnd();
+            Draw3DQuad(x + size - thick / 2, y + thick / 2, 0, thick, size - thick, height);
         }
         if (this->bot) {
             int r = (x * 30281 + y * 2424) % 256;
             int g = (x * 32412 + y * 2138) % 256;
             int b = (x * 239012 + y * 123323) % 256;
             glColor3ub(r, g, b);
-            // Top
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y + thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y + thick / 2, height);
-            glVertex3d(x + thick / 2, y + thick / 2, height);
-            glEnd();
-            // Bot
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y - thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y - thick / 2, 0);
-            glVertex3d(x + size - thick / 2, y - thick / 2, height);
-            glVertex3d(x + thick / 2, y - thick / 2, height);
-            glEnd();
-            // Up
-            glBegin(GL_QUADS);
-            glVertex3d(x + thick / 2, y + thick / 2, height);
-            glVertex3d(x + size - thick / 2, y + thick / 2, height);
-            glVertex3d(x + size - thick / 2, y - thick / 2, height);
-            glVertex3d(x + thick / 2, y - thick / 2, height);
-            glEnd();
+            Draw3DQuad(x + thick / 2, y - thick / 2, 0, size - thick, thick, height);
         }
     }
 }
 
 void Cell::DrawCorner(int centerX, int centerY, int thick, int height) {
     glColor3ub(0, 0, 0);
-
-    // Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height);
-
-    // Bot
-    glBegin(GL_QUADS);
-    glVertex3d(centerX - thick / 2, centerY - thick / 2, 0);
-    glVertex3d(centerX - thick / 2, centerY - thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY - thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY - thick / 2, 0);
-    glEnd();
-    // Left
-    glBegin(GL_QUADS);
-    glVertex3d(centerX - thick / 2, centerY - thick / 2, 0);
-    glVertex3d(centerX - thick / 2, centerY - thick / 2, height);
-    glVertex3d(centerX - thick / 2, centerY + thick / 2, height);
-    glVertex3d(centerX - thick / 2, centerY + thick / 2, 0);
-    glEnd();
-    // Right
-    glBegin(GL_QUADS);
-    glVertex3d(centerX + thick / 2, centerY - thick / 2, 0);
-    glVertex3d(centerX + thick / 2, centerY - thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY + thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY + thick / 2, 0);
-    glEnd();
-    // Top
-    glBegin(GL_QUADS);
-    glVertex3d(centerX - thick / 2, centerY + thick / 2, 0);
-    glVertex3d(centerX - thick / 2, centerY + thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY + thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY + thick / 2, 0);
-    glEnd();
-    // Up
-    glBegin(GL_QUADS);
-    glVertex3d(centerX - thick / 2, centerY - thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY - thick / 2, height);
-    glVertex3d(centerX + thick / 2, centerY + thick / 2, height);
-    glVertex3d(centerX - thick / 2, centerY + thick / 2, height);
-    glEnd();
+    Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height);
 }
 
 
@@ -289,10 +171,13 @@ void Maze::RemoveWalls(bool draw) {
     this->creating = true;
     this->RemoveWallsRecursive(rand() % this->cells.size(), rand() % this->cells[0].size(), draw);
     this->AddExits();
+    this->creating = false;
 }
 
 
 void Maze::RemoveWallsRecursive(int x, int y, bool draw) {
+    if (!this->creating)
+        return;
     this->cells[x][y].visited = true;
     this->cells[x][y].recursing = true;
     enum NEIGHBORS { LEFT, RIGHT, TOP, BOT };
@@ -331,18 +216,26 @@ void Maze::RemoveWallsRecursive(int x, int y, bool draw) {
             this->cells[x][y].left = false;
             this->cells[x - 1][y].right = false;
             this->RemoveWallsRecursive(x - 1, y, draw);
+            if (!this->creating)
+                return;
         } else if (n[r] == RIGHT) {
             this->cells[x][y].right = false;
             this->cells[x + 1][y].left = false;
             this->RemoveWallsRecursive(x + 1, y, draw);
+            if (!this->creating)
+                return;
         } else if (n[r] == TOP) {
             this->cells[x][y].top = false;
             this->cells[x][y + 1].bot = false;
             this->RemoveWallsRecursive(x, y + 1, draw);
+            if (!this->creating)
+                return;
         } else {
             this->cells[x][y].bot = false;
             this->cells[x][y - 1].top = false;
             this->RemoveWallsRecursive(x, y - 1, draw);
+            if (!this->creating)
+                return;
         }
     }
 }
@@ -365,7 +258,8 @@ bool Maze::OnWall(double x, double y, double radius) const {
         return false;
     }
 
-    radius -= this->wallThickness / 2;
+    radius += this->wallThickness / 2;
+    // radius *= .9;
 
     double offsetX = x - (this->offsetX + (xCell * this->cellSize));
     double offsetY = y - (this->offsetY + (yCell * this->cellSize));

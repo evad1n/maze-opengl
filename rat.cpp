@@ -20,9 +20,13 @@ void Rat::Draw() {
 
     glPushMatrix();
 
-    glTranslated(this->x, this->y, 0);
+    if (currentView == TOP) {
+        glTranslated(this->x, this->y, -2);
+    } else {
+        glTranslated(this->x, this->y, 2);
+    }
     glRotated(this->rot, 0, 0, 1);
-    glScaled(this->radius / 6, this->radius / 6, 0);
+    glScaled(this->radius / 6, this->radius / 6, 1);
 
     glColor3d(.5, .5, .7);
     glBegin(GL_POLYGON);
@@ -39,7 +43,10 @@ void Rat::Draw() {
 
     // Tail
     glLineWidth(2);
-    DrawLine(0, -5, 0, -8);
+    glBegin(GL_LINES);
+    glVertex3d(0, -6, 2);
+    glVertex3d(0, -8, 0);
+    glEnd();
     glLineWidth(1);
 
     glPopMatrix();

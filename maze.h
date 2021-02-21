@@ -28,9 +28,6 @@ public:
 class Maze {
     friend class Cell;
 private:
-    // Are we currently removing walls?
-    bool creating;
-
     double offsetX, offsetY;
     double width, height;
     double maxWidth, maxHeight;
@@ -38,6 +35,10 @@ private:
     double wallThickness, wallHeight;
 
     std::vector<std::vector<Cell>> cells;
+
+public:
+    // Are we currently removing walls?
+    bool creating;
 
 public:
     Maze();
