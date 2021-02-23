@@ -45,8 +45,6 @@ void Cell::Draw(int x, int y, int size, double thick, double height, unsigned ch
 
     if (currentView == TOP) {
 
-        std::cout << thick << std::endl;
-
         glColor3d(0, 0, 0);
         if (this->top && (walls & Walls::Top))
             DrawRectangle(x + thick / 2, y + size - thick / 2, size - thick, thick);
@@ -78,28 +76,28 @@ void Cell::Draw(int x, int y, int size, double thick, double height, unsigned ch
             int g = (x * 15364 + y * 21316) % 256;
             int b = (x * 12782 + y * 213123) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x + thick / 2, y + size - thick / 2, 0, size - thick, thick, height, "container.jpg");
+            Draw3DQuad(x + thick / 2, y + size - thick / 2, 0, size - thick, thick, height, "container.jpg", 5);
         }
         if (this->left) {
             int r = (x * 17495 + y * 7867) % 256;
             int g = (x * 19626 + y * 212316) % 256;
             int b = (x * 21757 + y * 21316) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x - thick / 2, y + thick / 2, 0, thick, size - thick, height, "container.jpg");
+            Draw3DQuad(x - thick / 2, y + thick / 2, 0, thick, size - thick, height, "container.jpg", 5);
         }
         if (this->right && (walls & Walls::Right)) {
             int r = (x * 23888 + y * 21316) % 256;
             int g = (x * 26019 + y * 29876) % 256;
             int b = (x * 28150 + y * 21316) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x + size - thick / 2, y + thick / 2, 0, thick, size - thick, height, "container.jpg");
+            Draw3DQuad(x + size - thick / 2, y + thick / 2, 0, thick, size - thick, height, "container.jpg", 5);
         }
         if (this->bot) {
             int r = (x * 30281 + y * 2424) % 256;
             int g = (x * 32412 + y * 2138) % 256;
             int b = (x * 239012 + y * 123323) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x + thick / 2, y - thick / 2, 0, size - thick, thick, height, "container.jpg");
+            Draw3DQuad(x + thick / 2, y - thick / 2, 0, size - thick, thick, height, "container.jpg", 5);
         }
 
         this->DrawCorner(x, y, thick, height);
