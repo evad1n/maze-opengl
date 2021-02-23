@@ -19,9 +19,9 @@ public:
     Cell(Maze* maze);
     ~Cell();
 
-    void Draw(int x, int y, int size, int thick, int height, unsigned char walls);
+    void Draw(int x, int y, int size, double thick, double height, unsigned char walls);
     // Draw corner blocks
-    void DrawCorner(int x, int y, int thick, int height);
+    void DrawCorner(int x, int y, double thick, double height);
     void Reset();
 };
 

@@ -63,12 +63,13 @@ void display(void) {
 	// Get elapsed time
 	static double prevTime = 0;
 	static int frame = 0;
-	double curr = glutGet(GLUT_ELAPSED_TIME);
+	double curr = (double)glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = curr - prevTime;
-	double fps = 1000 / deltaTime;
+	double fps = 1000.0 / deltaTime;
 	prevTime = curr;
 	frame++;
-	std::cout << "FPS: " << fps << std::endl;
+	// FPS printer
+	// std::cout << "FPS: " << fps << std::endl;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -90,7 +91,8 @@ void display(void) {
 	}
 
 	maze.Draw();
-	rat.Draw();
+	if (!maze.creating)
+		rat.Draw();
 
 	if (keystates['w'])
 		rat.MoveForward();

@@ -1,5 +1,6 @@
 #include <GL/freeglut.h>
 #include <iostream>
+#include <math.h>
 #include "graphics.h"
 #include "drawing.h"
 #include "maze.h"
@@ -24,30 +25,39 @@ Cell::~Cell() {
     // delete this->maze;
 }
 
-void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char walls) {
+void Cell::Draw(int x, int y, int size, double thick, double height, unsigned char walls) {
     // Draw floors
-    if (this->visited) {
-        if (this->recursing)
-            glColor3d(1, .4, .4);
-        else
-            glColor3d(.9, .9, .9);
-    } else
-        glColor3d(.7, .7, .7);
     DrawRectangle(x, y, size, size, "sand.jpg");
 
-    if (currentView == TOP) {
-        glColor3d(0, 0, 0);
-        if (this->top)
-            DrawLine(x, y + size, x + size, y + size);
-        if (this->left)
-            DrawLine(x, y, x, y + size);
-        if (this->right)
-            DrawLine(x + size, y, x + size, y + size);
-        if (this->bot)
-            DrawLine(x, y, x + size, y);
+    // Draw shading overlays
+    glPushMatrix();
+    glTranslated(0, 0, 1);
+    if (this->visited) {
+        if (this->recursing) {
+            glColor4ub(255, 0, 0, 40);
+            DrawRectangle(x, y, size, size);
+        }
     } else {
-        this->DrawCorner(x, y, thick, height);
-        // DrawWall(x, y, 0, thick, thick, height);
+        glColor4ub(0, 0, 0, 200);
+        DrawRectangle(x, y, size, size);
+    }
+    glPopMatrix();
+
+    if (currentView == TOP) {
+
+        std::cout << thick << std::endl;
+
+        glColor3d(0, 0, 0);
+        if (this->top && (walls & Walls::Top))
+            DrawRectangle(x + thick / 2, y + size - thick / 2, size - thick, thick);
+        if (this->left)
+            DrawRectangle(x - thick / 2, y + thick / 2, thick, size - thick);
+        if (this->right && (walls & Walls::Right))
+            DrawRectangle(x + size - thick / 2, y + thick / 2, thick, size - thick);
+        if (this->bot)
+            DrawRectangle(x + thick / 2, y - thick / 2, size - thick, thick);
+
+        this->DrawCorner(x, y, thick, 0);
 
         if (walls & Walls::Top) {
             this->DrawCorner(x, y + size, thick, height);
@@ -59,6 +69,10 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
             this->DrawCorner(x + size, y + size, thick, height);
         }
 
+        // Draw floors
+        // glColor4ub(0, 255, 0, 100);
+        // DrawRectangle(x, y, size, size);
+    } else {
         if (this->top && (walls & Walls::Top)) {
             int r = (x * 13233 + y * 3235) % 256;
             int g = (x * 15364 + y * 21316) % 256;
@@ -87,12 +101,31 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
             glColor3ub(r, g, b);
             Draw3DQuad(x + thick / 2, y - thick / 2, 0, size - thick, thick, height, "container.jpg");
         }
+
+        this->DrawCorner(x, y, thick, height);
+
+        if (walls & Walls::Top) {
+            this->DrawCorner(x, y + size, thick, height);
+        }
+        if (walls & Walls::Right) {
+            this->DrawCorner(x + size, y, thick, height);
+        }
+        if ((walls & Walls::Top) && (walls & Walls::Right)) {
+            this->DrawCorner(x + size, y + size, thick, height);
+        }
     }
 }
 
-void Cell::DrawCorner(int centerX, int centerY, int thick, int height) {
-    glColor3ub(0, 0, 0);
-    Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height, "steel.jpg");
+void Cell::DrawCorner(int centerX, int centerY, double thick, double height) {
+    if (currentView == TOP) {
+        glColor3ub(0, 0, 0);
+        DrawRectangle(centerX - thick / 2, centerY - thick / 2, thick, thick);
+    } else {
+        thick *= 1.2;
+        height *= 1.5;
+        glColor3ub(0, 0, 0);
+        Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height, "steel.jpg");
+    }
 }
 
 
@@ -112,6 +145,8 @@ Maze::Maze(double width, double height, int cellSize)
     this->cells = std::vector<std::vector<Cell>>{ };
 
     this->Resize(cellSize);
+    // Not carved out yet
+    this->creating = true;
 }
 
 Maze::~Maze() {}
@@ -141,8 +176,8 @@ void Maze::Reset() {
 void Maze::Resize(int cellSize) {
     this->creating = false;
     this->cellSize = cellSize;
-    this->wallThickness = cellSize / 5;
-    this->wallHeight = cellSize / 5;
+    this->wallThickness = (double)cellSize / 10.0;
+    this->wallHeight = (double)cellSize / 10.0;
 
     // Set size
     double cols = int(this->maxWidth / cellSize);
@@ -259,7 +294,6 @@ bool Maze::OnWall(double x, double y, double radius) const {
     }
 
     radius += this->wallThickness / 2;
-    // radius *= .9;
 
     double offsetX = x - (this->offsetX + (xCell * this->cellSize));
     double offsetY = y - (this->offsetY + (yCell * this->cellSize));
