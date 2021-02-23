@@ -33,7 +33,7 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
             glColor3d(.9, .9, .9);
     } else
         glColor3d(.7, .7, .7);
-    DrawRectangle(x, y, size, size);
+    DrawRectangle(x, y, size, size, "sand.jpg");
 
     if (currentView == TOP) {
         glColor3d(0, 0, 0);
@@ -64,35 +64,35 @@ void Cell::Draw(int x, int y, int size, int thick, int height, unsigned char wal
             int g = (x * 15364 + y * 21316) % 256;
             int b = (x * 12782 + y * 213123) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x + thick / 2, y + size - thick / 2, 0, size - thick, thick, height);
+            Draw3DQuad(x + thick / 2, y + size - thick / 2, 0, size - thick, thick, height, "container.jpg");
         }
         if (this->left) {
             int r = (x * 17495 + y * 7867) % 256;
             int g = (x * 19626 + y * 212316) % 256;
             int b = (x * 21757 + y * 21316) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x - thick / 2, y + thick / 2, 0, thick, size - thick, height);
+            Draw3DQuad(x - thick / 2, y + thick / 2, 0, thick, size - thick, height, "container.jpg");
         }
         if (this->right && (walls & Walls::Right)) {
             int r = (x * 23888 + y * 21316) % 256;
             int g = (x * 26019 + y * 29876) % 256;
             int b = (x * 28150 + y * 21316) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x + size - thick / 2, y + thick / 2, 0, thick, size - thick, height);
+            Draw3DQuad(x + size - thick / 2, y + thick / 2, 0, thick, size - thick, height, "container.jpg");
         }
         if (this->bot) {
             int r = (x * 30281 + y * 2424) % 256;
             int g = (x * 32412 + y * 2138) % 256;
             int b = (x * 239012 + y * 123323) % 256;
             glColor3ub(r, g, b);
-            Draw3DQuad(x + thick / 2, y - thick / 2, 0, size - thick, thick, height);
+            Draw3DQuad(x + thick / 2, y - thick / 2, 0, size - thick, thick, height, "container.jpg");
         }
     }
 }
 
 void Cell::DrawCorner(int centerX, int centerY, int thick, int height) {
     glColor3ub(0, 0, 0);
-    Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height);
+    Draw3DQuad(centerX - thick / 2, centerY - thick / 2, 0, thick, thick, height, "steel.jpg");
 }
 
 

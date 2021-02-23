@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstring>
 #include <map>
+#include <iostream>
 #include "drawing.h"
 
 extern std::map<std::string, unsigned int> texMap;
@@ -24,16 +25,16 @@ void DrawCircle(double x1, double y1, double radius) {
 void DrawRectangle(double x, double y, double width, double height, std::string textureName) {
     if (textureName != "") {
         glEnable(GL_TEXTURE_2D);
-
-        glBindTexture(GL_TEXTURE_2D, texMap[0]); // Sandra
+        glBindTexture(GL_TEXTURE_2D, texMap[textureName]);
 
         glBegin(GL_QUADS);
         glTexCoord2f(0, 1); glVertex2d(x, y);
         glTexCoord2f(1, 1); glVertex2d(x + width, y);
         glTexCoord2f(1, 0); glVertex2d(x + width, y + height);
         glTexCoord2f(0, 0); glVertex2d(x, y + height);
-
         glEnd();
+
+        glDisable(GL_TEXTURE_2D);
     } else {
         glBegin(GL_QUADS);
         glVertex2d(x, y);
@@ -78,49 +79,99 @@ void DrawText(double x, double y, const char* string) {
 
 // 3D Quad
 // x,y,z are the lower coordinate values (bottom left lowest corner)
-void Draw3DQuad(double x, double y, double z, double xSize, double ySize, double height) {
-    // -z
-    glBegin(GL_QUADS);
-    glVertex3d(x, y, z);
-    glVertex3d(x, y + ySize, z);
-    glVertex3d(x + xSize, y, z);
-    glVertex3d(x + xSize, y + ySize, z);
-    glEnd();
-    // +z
-    glBegin(GL_QUADS);
-    glVertex3d(x, y, z + height);
-    glVertex3d(x, y + ySize, z + height);
-    glVertex3d(x + xSize, y + ySize, z + height);
-    glVertex3d(x + xSize, y, z + height);
-    glEnd();
-    // -x
-    glBegin(GL_QUADS);
-    glVertex3d(x, y, z);
-    glVertex3d(x, y + ySize, z);
-    glVertex3d(x, y + ySize, z + height);
-    glVertex3d(x, y, z + height);
-    glEnd();
-    // +x
-    glBegin(GL_QUADS);
-    glVertex3d(x + xSize, y, z);
-    glVertex3d(x + xSize, y + ySize, z);
-    glVertex3d(x + xSize, y + ySize, z + height);
-    glVertex3d(x + xSize, y, z + height);
-    glEnd();
-    // -y
-    glBegin(GL_QUADS);
-    glVertex3d(x, y, z);
-    glVertex3d(x + xSize, y, z);
-    glVertex3d(x + xSize, y, z + height);
-    glVertex3d(x, y, z + height);
-    glEnd();
-    // +y
-    glBegin(GL_QUADS);
-    glVertex3d(x, y + ySize, z);
-    glVertex3d(x + xSize, y + ySize, z);
-    glVertex3d(x + xSize, y + ySize, z + height);
-    glVertex3d(x, y + ySize, z + height);
-    glEnd();
+void Draw3DQuad(double x, double y, double z, double xSize, double ySize, double height, std::string textureName) {
+    if (textureName != "") {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texMap[textureName]);
+
+        // -z
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1); glVertex3d(x, y, z);
+        glTexCoord2f(1, 1); glVertex3d(x, y + ySize, z);
+        glTexCoord2f(1, 0); glVertex3d(x + xSize, y, z);
+        glTexCoord2f(0, 0); glVertex3d(x + xSize, y + ySize, z);
+        glEnd();
+        // +z
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1); glVertex3d(x, y, z + height);
+        glTexCoord2f(1, 1); glVertex3d(x, y + ySize, z + height);
+        glTexCoord2f(1, 0); glVertex3d(x + xSize, y + ySize, z + height);
+        glTexCoord2f(0, 0); glVertex3d(x + xSize, y, z + height);
+        glEnd();
+        // -x
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1); glVertex3d(x, y, z);
+        glTexCoord2f(1, 1); glVertex3d(x, y + ySize, z);
+        glTexCoord2f(1, 0); glVertex3d(x, y + ySize, z + height);
+        glTexCoord2f(0, 0); glVertex3d(x, y, z + height);
+        glEnd();
+        // +x
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1); glVertex3d(x + xSize, y, z);
+        glTexCoord2f(1, 1); glVertex3d(x + xSize, y + ySize, z);
+        glTexCoord2f(1, 0); glVertex3d(x + xSize, y + ySize, z + height);
+        glTexCoord2f(0, 0); glVertex3d(x + xSize, y, z + height);
+        glEnd();
+        // -y
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1);glVertex3d(x, y, z);
+        glTexCoord2f(1, 1);glVertex3d(x + xSize, y, z);
+        glTexCoord2f(1, 0);glVertex3d(x + xSize, y, z + height);
+        glTexCoord2f(0, 0);glVertex3d(x, y, z + height);
+        glEnd();
+        // +y
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1);glVertex3d(x, y + ySize, z);
+        glTexCoord2f(1, 1);glVertex3d(x + xSize, y + ySize, z);
+        glTexCoord2f(1, 0);glVertex3d(x + xSize, y + ySize, z + height);
+        glTexCoord2f(0, 0);glVertex3d(x, y + ySize, z + height);
+        glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        // -z
+        glBegin(GL_QUADS);
+        glVertex3d(x, y, z);
+        glVertex3d(x, y + ySize, z);
+        glVertex3d(x + xSize, y, z);
+        glVertex3d(x + xSize, y + ySize, z);
+        glEnd();
+        // +z
+        glBegin(GL_QUADS);
+        glVertex3d(x, y, z + height);
+        glVertex3d(x, y + ySize, z + height);
+        glVertex3d(x + xSize, y + ySize, z + height);
+        glVertex3d(x + xSize, y, z + height);
+        glEnd();
+        // -x
+        glBegin(GL_QUADS);
+        glVertex3d(x, y, z);
+        glVertex3d(x, y + ySize, z);
+        glVertex3d(x, y + ySize, z + height);
+        glVertex3d(x, y, z + height);
+        glEnd();
+        // +x
+        glBegin(GL_QUADS);
+        glVertex3d(x + xSize, y, z);
+        glVertex3d(x + xSize, y + ySize, z);
+        glVertex3d(x + xSize, y + ySize, z + height);
+        glVertex3d(x + xSize, y, z + height);
+        glEnd();
+        // -y
+        glBegin(GL_QUADS);
+        glVertex3d(x, y, z);
+        glVertex3d(x + xSize, y, z);
+        glVertex3d(x + xSize, y, z + height);
+        glVertex3d(x, y, z + height);
+        glEnd();
+        // +y
+        glBegin(GL_QUADS);
+        glVertex3d(x, y + ySize, z);
+        glVertex3d(x + xSize, y + ySize, z);
+        glVertex3d(x + xSize, y + ySize, z + height);
+        glVertex3d(x, y + ySize, z + height);
+        glEnd();
+    }
 }
 
 //     // Draw quads with texture

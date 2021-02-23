@@ -60,11 +60,15 @@ void SetPerspectiveView(int w, int h) {
 // This callback function gets called by the Glut
 // system whenever it decides things need to be redrawn.
 void display(void) {
+	// Get elapsed time
 	static double prevTime = 0;
+	static int frame = 0;
 	double curr = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = curr - prevTime;
+	double fps = 1000 / deltaTime;
 	prevTime = curr;
-
+	frame++;
+	std::cout << "FPS: " << fps << std::endl;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -228,7 +232,8 @@ void loadTextures() {
 	glGenTextures(num_textures, texName);
 
 	for (int i = 0; i < num_textures; i++) {
-		texMap[imageFiles[i]] = i;
+		texMap[imageFiles[i]] = texName[i];
+		std::cout << imageFiles[i] << ", " << texName[i] << std::endl;
 		glBindTexture(GL_TEXTURE_2D, texName[i]);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -260,21 +265,7 @@ void InitializeMyStuff() {
 	rat.SetRandomPosition();
 	look = Point2{ screen_x / 2, screen_y / 2 };
 
-	// Textures
-	// int numTex = 10;
-	// char imageFiles[numTex][100] = {};
-	// glGenTextures(numTex, texName);
-
-	// for (int i = 0; i < numTex; i++) 	{
-	// 	glBindTexture(GL_TEXTURE_2D, texName[i]);
-	// 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-	// 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-	// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
-	// 	int width, height, nrChannels;
-	// 	unsigned char* data = stbi_load
-	// }
+	loadTextures();
 }
 
 int main(int argc, char** argv) {
