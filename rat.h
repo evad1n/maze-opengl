@@ -19,6 +19,8 @@ public:
 
     void MoveForward();
     void MoveBackward();
+    void StrafeLeft();
+    void StrafeRight();
     void SpinLeft();
     void SprinRight();
 

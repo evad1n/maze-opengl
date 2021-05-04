@@ -108,6 +108,44 @@ void Rat::MoveBackward() {
     }
 }
 
+void Rat::StrafeLeft() {
+    double radians = (180 + this->rot) / 180 * M_PI;
+    double dx = cos(radians);
+    double dy = sin(radians);
+    double speed = this->speed * (this->maze->GetCellSize() / 20);
+    // Future pos
+    double fX = this->x + (speed * dx * (deltaTime / 2));
+    double fY = this->y + (speed * dy * (deltaTime / 2));
+
+    if (!this->maze->OnWall(fX, fY, this->radius)) {
+        this->x = fX;
+        this->y = fY;
+    } else if (!this->maze->OnWall(fX, this->y, this->radius)) {
+        this->x = fX;
+    } else if (!this->maze->OnWall(this->x, fY, this->radius)) {
+        this->y = fY;
+    }
+}
+
+void Rat::StrafeRight() {
+    double radians = (this->rot) / 180 * M_PI;
+    double dx = cos(radians);
+    double dy = sin(radians);
+    double speed = this->speed * (this->maze->GetCellSize() / 20);
+    // Future pos
+    double fX = this->x + (speed * dx * (deltaTime / 2));
+    double fY = this->y + (speed * dy * (deltaTime / 2));
+
+    if (!this->maze->OnWall(fX, fY, this->radius)) {
+        this->x = fX;
+        this->y = fY;
+    } else if (!this->maze->OnWall(fX, this->y, this->radius)) {
+        this->x = fX;
+    } else if (!this->maze->OnWall(this->x, fY, this->radius)) {
+        this->y = fY;
+    }
+}
+
 void Rat::SpinLeft() {
     this->rot += this->rotSpeed * (deltaTime / 2);
 }

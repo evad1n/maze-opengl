@@ -102,6 +102,10 @@ void display(void) {
 		rat.MoveBackward();
 	if (keystates['d'])
 		rat.SprinRight();
+	if (keystates['q'])
+		rat.StrafeLeft();
+	if (keystates['e'])
+		rat.StrafeRight();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
